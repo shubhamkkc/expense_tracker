@@ -15,34 +15,51 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses> {
   List<ExpenseModel> expensesList = [
     ExpenseModel(
-        title: 'cinema', amount: 500, date: DateTime.now(), mode: Mode.Work)
+        title: 'cinema', amount: 500, date: DateTime.now(), mode: Mode.work)
   ];
-    addExpense(ExpenseModel expense){
-    expensesList.add(expense);
-
+  void addExpense(ExpenseModel expense) {
+    setState(() {
+      expensesList.add(expense);
+    });
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("Expenses Added")));
   }
+
+  void removeExpense(ExpenseModel expense) {
+    final expenseIndex = expensesList.indexOf(expense);
+    setState(() {
+      expensesList.remove(expense);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+            label: "undo",
+            onPressed: () => setState(() {
+                  expensesList.insert(expenseIndex, expense);
+                })),
+        content: const Text("expense deleted")));
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(appBar: AppBar(actions: [IconButton(onPressed: (){
-      showModalBottomSheet<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return  ExpenseAdd(addExpense);
-      
-
-    });
-      
-      }, icon: const Icon(Icons.add))],
-      title: const Text("Expense Tracker")),
-      body:  Padding(
-        padding: EdgeInsets.all(12.0),
-        child: Column(
-          children: [Chart(),
-          ExpenseList(expensesList)
-          ],
-      
-        ),
+    Widget mainContent = expensesList.isEmpty
+        ? const Center(child: Text("No Expenses Available"))
+        : ExpenseList(expensesList: expensesList, removeExpense: removeExpense);
+    return Scaffold(
+      appBar: AppBar(actions: [
+        IconButton(
+            onPressed: () {
+              showModalBottomSheet<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ExpenseAdd(expenseAdd: addExpense);
+                  });
+            },
+            icon: const Icon(Icons.add))
+      ], title: const Text("Expense Tracker")),
+      body: Column(
+        children: [const Chart(), Expanded(child: mainContent)],
       ),
     );
   }

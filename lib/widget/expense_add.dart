@@ -2,19 +2,22 @@ import 'package:expense_tracker/models/expense_model.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseAdd extends StatefulWidget {
-  const ExpenseAdd(this.expenseAdd,{super.key});
-  final Function expenseAdd;
+  const ExpenseAdd({required this.expenseAdd, super.key});
+  final void Function(ExpenseModel expense) expenseAdd;
 
   @override
   State<ExpenseAdd> createState() => _ExpenseAddState();
 }
 
 class _ExpenseAddState extends State<ExpenseAdd> {
-    final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   DateTime selectedDate = DateTime.now();
   bool isDatePicked = false;
-  List<String> modeOfTransaction = Mode.values.map((e) => e.name).toList();
-  String _selectedMode = "Lesiure";
+  // List<String> modeOfTransaction = Mode.values.map((e) => e.name).toList();
+  Mode _selectedMode = Mode.lesiure;
+  String? title;
+  double? amount;
+  DateTime? date;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -26,59 +29,63 @@ class _ExpenseAddState extends State<ExpenseAdd> {
       setState(() {
         selectedDate = picked;
         isDatePicked = true;
+        date = selectedDate;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-   late  String title;
-    late  double amount;
-   late  DateTime date;
-   late  String mode;
-    return Container(
+    return SizedBox(
       height: double.infinity,
-      color: Colors.white,
+      // color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Form(
           key: _formKey,
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextFormField(
                 validator: (value) {
-                  if(value==null || value.isEmpty)
-                  {
+                  if (value == null || value.isEmpty) {
                     return "please enter a title";
                   }
-                   return null;
-                } ,
+                  return null;
+                },
                 decoration: const InputDecoration(
                   label: Text("Title"),
                 ),
                 maxLength: 40,
-                onSaved: (newValue) => 
-                title = newValue!,
+                onSaved: (newValue) => setState(() {
+                  title = newValue!;
+                }),
               ),
-              
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Expanded(
                       child: TextFormField(
-                         validator: (value) {
-                  if(value==null || value.isEmpty|| value=='0.0' )
-                  {
-                    return "please enter a valid Amount";
-                  }
-                   return null;
-                } ,
+                          onSaved: (newValue) => setState(() {
+                                amount = double.tryParse(newValue!);
+                              }),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value == '0.0') {
+                              return "please enter a valid Amount";
+                            }
+                            return null;
+                          },
                           decoration: const InputDecoration(
-                    label: Text("Amount"),
-                  ))),
+                            suffixText: '₹',
+                            label: Text("Amount"),
+                          ))),
+                  const SizedBox(
+                    width: 65,
+                  ),
                   (isDatePicked == false)
                       ? const Text("No date selected")
                       : Text(
@@ -91,21 +98,26 @@ class _ExpenseAddState extends State<ExpenseAdd> {
                       icon: const Icon(Icons.calendar_month)),
                 ],
               ),
-              const SizedBox(height: 8,),
+              const SizedBox(
+                height: 8,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  DropdownButton<String>(
+                  DropdownButton(
                     value: _selectedMode,
-                    items: modeOfTransaction.map((String value) {
-                      return DropdownMenuItem<String>(
+                    items: Mode.values.map((value) {
+                      return DropdownMenuItem(
                         value: value,
-                        child: Text(value),
+                        child: Text(value.name.toString()),
                       );
                     }).toList(),
                     onChanged: (val) {
+                      if (val == null) {
+                        return;
+                      }
                       setState(() {
-                        _selectedMode = val!;
+                        _selectedMode = val;
                       });
                     },
                   ),
@@ -119,16 +131,17 @@ class _ExpenseAddState extends State<ExpenseAdd> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          if(_formKey.currentState!.validate()){
-                          _formKey.currentState!.save();
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
 
-                   widget.expenseAdd(
-                   ExpenseModel( title: title , amount: amount, date: date, mode: mode)
-                   );
-
+                            widget.expenseAdd(ExpenseModel(
+                                title: title!,
+                                amount: amount!,
+                                date: date ?? DateTime.now(),
+                                mode: _selectedMode));
                             Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Expenses Added")));
                           }
+                          return;
                         },
                         child: const Text("Add"),
                       )
@@ -137,9 +150,7 @@ class _ExpenseAddState extends State<ExpenseAdd> {
                 ],
               )
             ],
-
           ),
-
         ),
       ),
     );
