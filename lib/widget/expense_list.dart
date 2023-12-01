@@ -29,35 +29,65 @@ class _ExpenseListState extends State<ExpenseList> {
                   widget.removeExpense(widget.expensesList[index]),
               child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.expensesList[index].title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Container(
+                            padding: const EdgeInsets.all(13),
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle, color: Colors.white),
+                            child: Icon(categoryIcons[
+                                widget.expensesList[index].mode])),
+                        const SizedBox(
+                          width: 15,
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                              '${widget.expensesList[index].amount.toStringAsFixed(2)} ₹'),
-                          Row(
-                            children: [
-                              Icon(categoryIcons[
-                                  widget.expensesList[index].mode]),
-                              // Text( "${widget.expensesList[index].date.day}/${widget.expensesList[index].date.month}/${widget.expensesList[index].date.year}")
-                              Text(widget.expensesList[index].formatDate)
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.expensesList[index].title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                                'Spent on ${widget.expensesList[index].formatDate}')
+                          ],
+                        ),
+                        Spacer(),
+                        Text(
+                            '${widget.expensesList[index].amount.toStringAsFixed(2)} ₹')
+                      ],
+                    )
+                    //  Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     Text(
+                    //       widget.expensesList[index].title,
+                    //       style: const TextStyle(
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: 18,
+                    //       ),
+                    //     ),
+                    //     Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Text(
+                    //             '${widget.expensesList[index].amount.toStringAsFixed(2)} ₹'),
+                    //         Row(
+                    //           children: [
+                    //             Icon(categoryIcons[
+                    //                 widget.expensesList[index].mode]),
+                    //             // Text( "${widget.expensesList[index].date.day}/${widget.expensesList[index].date.month}/${widget.expensesList[index].date.year}")
+                    //             Text(widget.expensesList[index].formatDate)
+                    //           ],
+                    //         )
+                    //       ],
+                    //     )
+                    //   ],
+                    // ),
+                    ),
               ),
             ));
   }

@@ -1,4 +1,4 @@
-import 'package:expense_tracker/widget/chart.dart';
+import 'package:expense_tracker/widget/chart/chart.dart';
 import 'package:expense_tracker/widget/expense_add.dart';
 import 'package:expense_tracker/widget/expense_list.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class _ExpensesState extends State<Expenses> {
   @override
   Widget build(BuildContext context) {
     Widget mainContent = expensesList.isEmpty
-        ? const Center(child: Text("No Expenses Available"))
+        ? Center(child: Text("No Expenses Available"))
         : ExpenseList(expensesList: expensesList, removeExpense: removeExpense);
     return Scaffold(
       appBar: AppBar(actions: [
@@ -59,7 +59,12 @@ class _ExpensesState extends State<Expenses> {
             icon: const Icon(Icons.add))
       ], title: const Text("Expense Tracker")),
       body: Column(
-        children: [const Chart(), Expanded(child: mainContent)],
+        children: [
+          Chart(
+            expenses: expensesList,
+          ),
+          Expanded(child: mainContent)
+        ],
       ),
     );
   }
