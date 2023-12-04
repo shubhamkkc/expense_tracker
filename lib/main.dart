@@ -8,7 +8,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  ColorScheme kColorScheme = ColorScheme.fromSeed(seedColor: Colors.blueAccent);
+  ColorScheme kColorScheme =
+      ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 241, 21, 21));
   ColorScheme kdarkColorScheme = ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 0, 10, 27),
     brightness: Brightness.dark,

@@ -15,6 +15,8 @@ class ExpenseList extends StatefulWidget {
 class _ExpenseListState extends State<ExpenseList> {
   @override
   Widget build(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
@@ -34,8 +36,18 @@ class _ExpenseListState extends State<ExpenseList> {
                       children: [
                         Container(
                             padding: const EdgeInsets.all(13),
-                            decoration: const BoxDecoration(
-                                shape: BoxShape.circle, color: Colors.white),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isDarkMode
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.65)
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.65),
+                            ),
                             child: Icon(categoryIcons[
                                 widget.expensesList[index].mode])),
                         const SizedBox(

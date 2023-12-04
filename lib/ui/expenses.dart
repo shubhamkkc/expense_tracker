@@ -13,10 +13,7 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  List<ExpenseModel> expensesList = [
-    ExpenseModel(
-        title: 'cinema', amount: 500, date: DateTime.now(), mode: Mode.work)
-  ];
+  List<ExpenseModel> expensesList = [];
   void addExpense(ExpenseModel expense) {
     setState(() {
       expensesList.add(expense);
